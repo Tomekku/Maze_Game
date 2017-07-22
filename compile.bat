@@ -1,0 +1,1 @@
+gcc src/*.c -o bin/GAME -std=c99  -lSDL2 -lSDL2_ttf -lSDL2_image -g -w 
