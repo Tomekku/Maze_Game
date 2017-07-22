@@ -9,8 +9,8 @@ Feel free to pull requests :D
 
 Here are some screen shots
 
-![alt text](https://github.com/Tomekku/Maze-Game/images/image1.png "Main menu")
+![alt text](https://github.com/Tomekku/Maze_Game/images/image1.png "Main menu")
 
-![alt text](https://github.com/Tomekku/Maze-Game/images/image2.png "Level Generator")
+![alt text](https://github.com/Tomekku/Maze_Game/images/image2.png "Level Generator")
 
-![alt text](https://github.com/Tomekku/Maze-Game/images/image3.png "Gameplay")
+![alt text](https://github.com/Tomekku/Maze_Game/images/image3.png "Gameplay")
