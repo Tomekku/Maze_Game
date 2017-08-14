@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include "collisions.h"
+#include "animations.h"
 
 void ENEMY_updateEnemy(Enemy *enemy, Level *level);
 

@@ -7,6 +7,7 @@
 #include "level.h"
 #include "mainMenu.h"
 #include "file.h"
+#include "animations.h"
 
 void loadMenu(System *system_data);
 

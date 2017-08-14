@@ -3,10 +3,10 @@
 void loadMenu(System *system_data)
 {
     TEXT_STRUCT menuTexts;
-    
+
     menuTexts.texts = (TEXT*)MENU_generateTexts(system_data->renderer, &menuTexts.textsCount);
 
-    
+
     bool end = false;
     while(system_data->gameState == MENU)
     {
@@ -50,7 +50,7 @@ void lastLevelInfo(System *system_data)
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
-        
+
         SDL_FreeSurface( firstTextSurface );
         SDL_FreeSurface( secondTextSurface );
     }
@@ -78,7 +78,7 @@ void playerDiedInfo(System *system_data)
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
-        
+
         SDL_FreeSurface( firstTextSurface );
     }
     else
@@ -104,7 +104,7 @@ void noLevelInfo(System *system_data)
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
-        
+
         SDL_FreeSurface( firstTextSurface );
     }
     else
@@ -135,7 +135,7 @@ void submitLastScore(System *system_data, Player *player, Level *level)
 void openLevelGenerator(System *system_data)
 {
     loading(system_data);
-        
+
     SDL_Rect createButtonRect = {650,500,106,38};
     Button createButton = LEVEL_generateButton(system_data->renderer, B_CREATE, createButtonRect);
     SDL_Rect backButtonRect = {100, 550, 106, 38};
@@ -151,13 +151,13 @@ void openLevelGenerator(System *system_data)
     legend.playerPosY = -1;
     legend.playerDestX = -1;
     legend.playerDestY = -1;
-    
-    
-    while (system_data->gameState == CREATE_LEVEL) 
+
+
+    while (system_data->gameState == CREATE_LEVEL)
     {
         SDL_RenderClear(system_data->renderer);
         LEVEL_processEvent(system_data, &map, &legend, &createButton, &backButton);
-        
+
         for(int i=0; i<legend.legendsCount; i++)
         {
             SDL_RenderCopy(system_data->renderer,legend.legends[i].text.texture, NULL, &legend.legends[i].text.rect);
@@ -171,7 +171,7 @@ void openLevelGenerator(System *system_data)
         SDL_RenderPresent(system_data->renderer);
         SDL_Delay(50);
     }
-    
+
     LEVEL_deleteButton(&createButton);
     LEVEL_deleteButton(&backButton);
     LEVEL_deleteLegend(&legend);
@@ -209,10 +209,10 @@ void playGame(Player *player, Level *level, System *system_data)
     SDL_Texture* levelTextTexture = NULL;
     SDL_Rect levelTextRect = {460,20,60,30};
     SDL_Texture *mapTexture = NULL;
-    
+
     LEVEL_generateMapTexture(system_data, &level->map, &mapTexture);
 
-    while (system_data->gameState == GAME) 
+    while (system_data->gameState == GAME)
     {
         if(isCollision(player->rect, level->endRect))
         {
@@ -227,13 +227,14 @@ void playGame(Player *player, Level *level, System *system_data)
             break;
         }
         PLAYER_processEvents(system_data, player);
-        
-        
+
+
         PLAYER_updatePlayerScore(system_data, player, &scoreTextTexture);
         PLAYER_updatePlayerKeyCount(system_data, player, &keyCountTextTexture);
         LEVEL_updateLevelNumber(system_data, level, &levelTextTexture);
-        
+
         PLAYER_updatePlayer(player, level);
+        animate(system_data, 'P', 1, player);
         ENEMY_updateEnemies(level);
         SDL_RenderClear(system_data->renderer);
         SDL_RenderCopy(system_data->renderer, mapTexture, NULL, NULL);
@@ -260,39 +261,39 @@ void init(System *system_data, Level *level, Player *player)
         system_data->gameState = END;
         return;
     }
-    
-    if(TTF_Init() == -1) 
+
+    if(TTF_Init() == -1)
     {
         printf("TTF_Init: %s\n", TTF_GetError());
         system_data->gameState = END;
         return;
     }
-    
+
     SDL_Init(SDL_INIT_VIDEO);
     system_data->gameState = MENU;
     system_data->window = SDL_CreateWindow("Maze Game", SDL_WINDOWPOS_UNDEFINED,SDL_WINDOWPOS_UNDEFINED,800,600, 0);
     system_data->renderer = SDL_CreateRenderer(system_data->window, -1, SDL_RENDERER_ACCELERATED);
-    
+
     ItemType itemtypes[] = {IT_WALL, IT_ENEMY, IT_COIN, IT_DOOR, IT_O_DOOR, IT_KEY, IT_EMPTY, IT_PPOS, IT_PFIN, IT_H_WALL, IT_H_ENEMY, IT_H_COIN, IT_H_DOOR, IT_H_KEY, IT_H_EMPTY, IT_H_PPOS, IT_H_PFIN};
     system_data->MapElementScreenCount = 17;
     system_data->mapElementsScreens = (MapElementScreen*)malloc(system_data->MapElementScreenCount*sizeof(MapElementScreen));
     for(int i=0; i<system_data->MapElementScreenCount && system_data->gameState != END; i++)
         system_data->mapElementsScreens[i] = LEVEL_createMapElementsScreen(itemtypes[i], system_data);
-        
+
     level->order = 0;
     level->walls = NULL;
     level->coins = NULL;
     level->enemies = NULL;
     level->doors = NULL;
     level->keys = NULL;
-    
-    player->surface = IMG_Load("../res/man3_fr1.gif");
-    player->texture = SDL_CreateTextureFromSurface(system_data->renderer, player->surface);
+
     player->speed = 1;
     player->keyCount = 0;
     player->score = 0;
     player->isAlive = true;
     player->direction = STOP;
+    player->texture = NULL;
+    initAnimate(system_data, &player->animationStruct, 'P');
 }
 
 void cleanUp(System *system_data)
@@ -312,7 +313,7 @@ void runGame()
     Player player;
     Level level;
     init(&system_data, &level, &player);
-    
+
     while(system_data.gameState != END)
     {
         switch(system_data.gameState)

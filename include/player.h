@@ -5,6 +5,7 @@
 #include "structs.h"
 #include "mainMenu.h"
 #include "level.h"
+#include "animations.h"
 
 
 void PLAYER_updatePlayer(Player *player, Level *level);
@@ -21,4 +22,7 @@ void PLAYER_updatePlayerKeyCount(System *system_data, Player *player, SDL_Textur
 
 void PLAYER_deletePlayer(Player *player);
 
+void PLAYER_animatePlayer(System *system_data, Player *player);
+
+AnimationSurfaces* PLAYER_addAnimationSurfaces(Direction direction);
 #endif

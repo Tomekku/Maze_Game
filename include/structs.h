@@ -16,6 +16,16 @@
 #include "enums.h"
 
 
+typedef struct AnimationSurfaces AnimationSurfaces;
+struct AnimationSurfaces{
+  SDL_Surface* surface;
+  AnimationSurfaces* next;
+};
+
+typedef struct {
+  AnimationSurfaces* animationSurfaces;
+}Animation_STUCT;
+
 typedef struct{
     char* text;
     SDL_Surface* surface;
@@ -134,7 +144,7 @@ typedef struct {
     int score;
     int speed;
     Direction direction;
-    SDL_Surface* surface;
+    Animation_STUCT* animationStruct;
     SDL_Texture* texture;
     SDL_Rect rect;
 } Player;
@@ -142,6 +152,7 @@ typedef struct {
 
 typedef struct {
     SDL_Surface surface;
+    // Animation_STUCT* animationStruct; TODO: zmienić wszędzie, gdzie się robi powyższy obiekt na wskaźnik
     SDL_Texture* texture;
     SDL_Rect rect;
     int speed;

@@ -12,8 +12,8 @@ void PLAYER_updatePlayer(Player *player, Level *level)
         player->keyCount++;
         LEVEL_deleteKeyAtRect(&level->keys, player->rect);
     }
-    
-    PLAYER_updatePlayerRect(player, level); 
+
+    PLAYER_updatePlayerRect(player, level);
     if(isCollideWithEnemies(player->rect, level->enemies))
         player->isAlive = false;
 }
@@ -59,12 +59,12 @@ void PLAYER_updatePlayerRect(Player *player, Level *level)
 
 void PLAYER_processEvents(System *system_data, Player *player)
 {
-    
+
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        
-        switch (event.type) 
+
+        switch (event.type)
         {
             case SDL_WINDOWEVENT_CLOSE:
                 system_data->gameState = END;
@@ -75,7 +75,7 @@ void PLAYER_processEvents(System *system_data, Player *player)
             default:
                 break;
         }
-    }    
+    }
     const Uint8* keystate = SDL_GetKeyboardState(NULL);
     if(keystate[SDL_SCANCODE_W] && keystate[SDL_SCANCODE_A])
         player->direction = LEFT_UP;
@@ -97,16 +97,16 @@ void PLAYER_processEvents(System *system_data, Player *player)
         system_data->gameState = MENU;
     else if(!keystate[SDL_SCANCODE_D] && !keystate[SDL_SCANCODE_A] && !keystate[SDL_SCANCODE_S] && !keystate[SDL_SCANCODE_W])
         player->direction = STOP;
-            
+
 }
 
 void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* entryText, char* inputText, int inputTextSize)
 {
     bool quit = false;
-    
+
     SDL_Event e;
     int currentLast = -1;
-    
+
     SDL_Texture* entryTextTexture = NULL;
     SDL_Surface* entryTextSurface = MENU_generateTextsSurface(entryText, false, 100);
     if( entryTextSurface != NULL )
@@ -116,7 +116,7 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
-        
+
         SDL_FreeSurface( entryTextSurface );
     }
     else
@@ -130,7 +130,7 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
 
     while( !quit )
     {
-        
+
         bool renderText = false;
         SDL_Texture *texture = NULL;
         while( SDL_PollEvent( &e ))
@@ -149,7 +149,7 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
                     else
                         inputText[currentLast] = '\0';
                     currentLast--;
-                    
+
                     renderText = true;
                 } else if(e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER)
                 {
@@ -182,7 +182,7 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
                     {
                         printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
                     }
-                    
+
                     SDL_FreeSurface( textSurface );
                 }
                 else
@@ -200,7 +200,7 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
                     {
                         printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
                     }
-                
+
                     SDL_FreeSurface( textSurface );
                 }
                 else
@@ -208,16 +208,16 @@ void PLAYER_getTextFromUser(System *system_data, SDL_Rect entryTextRect, char* e
                     printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
                 }
             }
-            
+
             SDL_Rect rect = {entryTextRect.x, entryTextRect.y+entryTextRect.h, (entryTextRect.w/strlen(entryText))*(currentLast+1), entryTextRect.h/3};
             SDL_RenderClear( system_data->renderer );
             SDL_RenderCopy(system_data->renderer, entryTextTexture, NULL, &entryTextRect);
             SDL_RenderCopy(system_data->renderer, texture, NULL, &rect);
             SDL_RenderPresent( system_data->renderer );
         }
-        
+
     }
-    
+
     SDL_StopTextInput();
 }
 
@@ -239,8 +239,100 @@ void PLAYER_updatePlayerKeyCount(System *system_data, Player *player, SDL_Textur
     SDL_FreeSurface(keyCountTextsurface);
 }
 
+AnimationSurfaces* PLAYER_addAnimationSurfaces(Direction direction)
+{
+  AnimationSurfaces* animationSurfaces = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+  switch(direction)
+  {
+    case LEFT:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_lf1.gif");
+      tmp->surface = IMG_Load("../res/man3_lf2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT_DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_rt1.gif");
+      tmp->surface = IMG_Load("../res/man3_rt2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_bk1.gif");
+      tmp->surface = IMG_Load("../res/man3_bk2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case LEFT_DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_lf1.gif");
+      tmp->surface = IMG_Load("../res/man3_lf2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_rt1.gif");
+      tmp->surface = IMG_Load("../res/man3_rt2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case LEFT_UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_lf1.gif");
+      tmp->surface = IMG_Load("../res/man3_lf2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_fr1.gif");
+      tmp->surface = IMG_Load("../res/man3_fr2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT_UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/man3_rt1.gif");
+      tmp->surface = IMG_Load("../res/man3_rt2.gif");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case STOP:
+    {
+      animationSurfaces->surface = IMG_Load("../res/man3_st1.gif");
+      animationSurfaces->next = (AnimationSurfaces*)animationSurfaces;
+    }break;
+    default:
+    {
+      free(animationSurfaces);
+      animationSurfaces = NULL;
+    }break;
+  }
+
+  return animationSurfaces;
+}
+
+void PLAYER_animatePlayer(System *system_data, Player *player)
+{
+  if(player->texture)
+    SDL_DestroyTexture(player->texture);
+  player->texture = SDL_CreateTextureFromSurface(system_data->renderer, player->animationStruct[player->direction].animationSurfaces->surface);
+  player->animationStruct[player->direction].animationSurfaces = player->animationStruct[player->direction].animationSurfaces->next;
+}
+
 void PLAYER_deletePlayer(Player *player)
 {
-    SDL_FreeSurface(player->surface);
+    deleteAnimations(player->animationStruct);
     SDL_DestroyTexture(player->texture);
 }
