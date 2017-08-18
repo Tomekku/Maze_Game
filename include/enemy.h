@@ -7,7 +7,10 @@
 
 void ENEMY_updateEnemy(Enemy *enemy, Level *level);
 
-void ENEMY_updateEnemies(Level *level);
+void ENEMY_updateEnemies(System *system_data, Level *level);
 
+AnimationSurfaces* ENEMY_addAnimationSurfaces(Direction direction);
+
+void ENEMY_animateEnemy(System *system_data, Enemy* enemy);
 
 #endif

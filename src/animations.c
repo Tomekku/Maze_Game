@@ -36,8 +36,8 @@ void initAnimate(System *system_data, Animation_STUCT **animationStruct, char fo
   {
     if(format == 'P')
       (*animationStruct)[i].animationSurfaces = (AnimationSurfaces*) PLAYER_addAnimationSurfaces(i);
-    // else if(format == 'E')
-    //   (*animationStruct)[i].animationSurfaces = (AnimationSurfaces*) ENEMY_addAnimationSurfaces(i);
+    else if(format == 'E')
+      (*animationStruct)[i].animationSurfaces = (AnimationSurfaces*) ENEMY_addAnimationSurfaces(i);
   }
 }
 
@@ -51,11 +51,11 @@ void animate(System *system_data, char format, int argNum, ...)
     va_end(valist);
     PLAYER_animatePlayer(system_data, player);
   }
-  // if(format == 'E')
-  // {
-  //   Enemy* enemy = va_arg(valist, Enemy*);
-  //   va_end(valist);
-  //   ENEMY_animateEnemy(system_data, enemy);
-  // }
+  if(format == 'E')
+  {
+    Enemy* enemy = va_arg(valist, Enemy*);
+    va_end(valist);
+    ENEMY_animateEnemy(system_data, enemy);
+  }
 
 }

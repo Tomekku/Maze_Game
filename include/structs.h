@@ -151,8 +151,7 @@ typedef struct {
 
 
 typedef struct {
-    SDL_Surface surface;
-    // Animation_STUCT* animationStruct; TODO: zmienić wszędzie, gdzie się robi powyższy obiekt na wskaźnik
+    Animation_STUCT* animationStruct;
     SDL_Texture* texture;
     SDL_Rect rect;
     int speed;

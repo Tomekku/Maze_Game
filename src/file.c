@@ -10,10 +10,10 @@ void FILE_exportLevelToFile(Map_STRUCT *map, char* fileName)
         _fileName[i] = fileName[i];
     for(int j=0;j<5;j++)
         _fileName[i+j] = extention[j];
-        
+
     map->posX = 100;
     map->posY = 60;
-    
+
     FILE* file;
     if((file = (FILE*)fopen(_fileName, "rb+")) == NULL)
     {
@@ -27,7 +27,7 @@ void FILE_exportLevelToFile(Map_STRUCT *map, char* fileName)
     fwrite(&map->posY, sizeof(int), 1, file);
     for(int x=0; x<map->mapSizeX; x++)
     {
-        
+
         for(int y=0; y<map->mapSizeY; y++)
         {
             fwrite(&map->mapElements[x][y].elementScreen.itemType, sizeof(ItemType), 1, file);
@@ -49,18 +49,18 @@ Map_STRUCT FILE_importLevelFromFile(char* fileName, System* system_data, Player 
             return map;
         }
     }
-    
+
     fread(&map.posX, sizeof(int), 1, file);
     fread(&map.posY, sizeof(int), 1, file);
     map.mapElements = LEVEL_generateMap(&map.mapSizeX, &map.mapSizeY, system_data->renderer, system_data->mapElementsScreens, system_data->MapElementScreenCount, map.posX, map.posY);
     for(int x=0; x<map.mapSizeX; x++)
     {
-        
+
         for(int y=0; y<map.mapSizeY; y++)
         {
             ItemType itemType;
             fread(&itemType, sizeof(ItemType), 1, file);
-            
+
             switch (itemType) {
                 case IT_WALL:
                 {
@@ -68,12 +68,14 @@ Map_STRUCT FILE_importLevelFromFile(char* fileName, System* system_data, Player 
                     tmp->rect = map.mapElements[x][y].rect;
                     tmp->next = (struct Wall*)level->walls;
                     level->walls = (Wall*)tmp;
-                    break; 
+                    break;
                 }
                 case IT_ENEMY:
                 {
-                    SDL_Surface surface = (*LEVEL_findSurfaceByItemType(itemType, system_data->mapElementsScreens, system_data->MapElementScreenCount));
-                    Enemy enemy = {surface ,SDL_CreateTextureFromSurface(system_data->renderer, &surface) ,map.mapElements[x][y].rect, 1, true, LEFT};
+                    Direction enemyDirection = LEFT;
+                    Enemy enemy = {NULL, NULL ,map.mapElements[x][y].rect, 1, true, enemyDirection};
+                    initAnimate(system_data, &enemy.animationStruct, 'E');
+                    enemy.texture = SDL_CreateTextureFromSurface(system_data->renderer, enemy.animationStruct[enemy.direction].animationSurfaces->surface);
                     Enemy_STRUCT *tmp = (Enemy_STRUCT*)malloc(sizeof(Enemy_STRUCT));
                     tmp->enemy = enemy;
                     tmp->next = (struct Enemy_STRUCT*)level->enemies;
@@ -127,9 +129,9 @@ Map_STRUCT FILE_importLevelFromFile(char* fileName, System* system_data, Player 
                     break;
                 }
             }
-            
+
             map.mapElements[x][y] = LEVEL_generateMapElement(map.mapElements[x][y].rect, system_data->renderer, itemType, false, system_data->mapElementsScreens, system_data->MapElementScreenCount);
-            
+
         }
     }
     fclose(file);
@@ -145,6 +147,6 @@ void FILE_updateScoreList(char playerName[21], int score)
         return;
     }
     fprintf(file, "%s .............................. %d\n", playerName, score );
-    
+
     fclose(file);
 }

@@ -1,6 +1,86 @@
 #include "../include/enemy.h"
 
 
+AnimationSurfaces* ENEMY_addAnimationSurfaces(Direction direction)
+{
+  AnimationSurfaces* animationSurfaces = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+  switch(direction)
+  {
+    case LEFT:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_lf1.png");
+      tmp->surface = IMG_Load("../res/spd1_lf2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT_DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_rt1.png");
+      tmp->surface = IMG_Load("../res/spd1_rt2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_bk1.png");
+      tmp->surface = IMG_Load("../res/spd1_bk2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case LEFT_DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_lf1.png");
+      tmp->surface = IMG_Load("../res/spd1_lf2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_rt1.png");
+      tmp->surface = IMG_Load("../res/spd1_rt2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case LEFT_UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_lf1.png");
+      tmp->surface = IMG_Load("../res/spd1_lf2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case DOWN:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_fr1.png");
+      tmp->surface = IMG_Load("../res/spd1_fr2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    case RIGHT_UP:
+    {
+      AnimationSurfaces* tmp = (AnimationSurfaces*)malloc(sizeof(AnimationSurfaces*));
+      animationSurfaces->surface = IMG_Load("../res/spd1_rt1.png");
+      tmp->surface = IMG_Load("../res/spd1_rt2.png");
+      tmp->next = (AnimationSurfaces*)animationSurfaces;
+      animationSurfaces->next = (AnimationSurfaces*)tmp;
+    }break;
+    default:
+    {
+      free(animationSurfaces);
+      animationSurfaces = NULL;
+    }break;
+  }
+
+  return animationSurfaces;
+}
+
+
 void ENEMY_updateEnemy(Enemy *enemy, Level *level)
 {
     SDL_Rect tmp_rect = enemy->rect;
@@ -45,14 +125,22 @@ void ENEMY_updateEnemy(Enemy *enemy, Level *level)
         else
             enemy->direction++;
     }
+
 }
 
-void ENEMY_updateEnemies(Level *level)
+void ENEMY_animateEnemy(System *system_data, Enemy* enemy)
+{
+  enemy->texture = SDL_CreateTextureFromSurface(system_data->renderer, enemy->animationStruct[enemy->direction].animationSurfaces->surface);
+  enemy->animationStruct[enemy->direction].animationSurfaces = enemy->animationStruct[enemy->direction].animationSurfaces->next;
+}
+
+void ENEMY_updateEnemies(System *system_data, Level *level)
 {
     Enemy_STRUCT *tmp = level->enemies;
     while(tmp)
     {
         ENEMY_updateEnemy(&tmp->enemy, level);
+        animate(system_data, 'E', 1, &tmp->enemy);
         tmp = (Enemy_STRUCT*)tmp->next;
     }
 }

@@ -2,6 +2,8 @@
 #define _FILE_H
 #include "structs.h"
 #include "level.h"
+#include "enemy.h"
+#include "animations.h"
 
 
 void FILE_exportLevelToFile(Map_STRUCT *map, char* fileName);

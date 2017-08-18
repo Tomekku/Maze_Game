@@ -235,7 +235,7 @@ void playGame(Player *player, Level *level, System *system_data)
 
         PLAYER_updatePlayer(player, level);
         animate(system_data, 'P', 1, player);
-        ENEMY_updateEnemies(level);
+        ENEMY_updateEnemies(system_data, level);
         SDL_RenderClear(system_data->renderer);
         SDL_RenderCopy(system_data->renderer, mapTexture, NULL, NULL);
         SDL_RenderCopy(system_data->renderer, scoreTextTexture, NULL, &scoreTextRect);
@@ -244,7 +244,7 @@ void playGame(Player *player, Level *level, System *system_data)
         LEVEL_renderLevelItems(level, system_data);
         SDL_RenderCopy(system_data->renderer, player->texture, NULL, &player->rect);
         SDL_RenderPresent(system_data->renderer);
-        SDL_Delay(10);
+        SDL_Delay(20);
     }
     SDL_DestroyTexture(scoreTextTexture);
     SDL_DestroyTexture(levelTextTexture);
