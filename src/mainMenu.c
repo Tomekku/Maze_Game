@@ -11,7 +11,7 @@ SDL_Surface* MENU_generateTextsSurface(char* text, bool active, int fontSize)
     {
         printf( "Unable to load font   Error: %s\n", TTF_GetError());
     }
-    
+
     SDL_Surface* surface;
     SDL_Color activeColor = {0, 0, 255};
     SDL_Color inactiveColor = {255, 255, 255};
@@ -27,15 +27,15 @@ TEXT* MENU_generateTexts(SDL_Renderer *renderer, int *textsCount)
 {
     (*textsCount) = 3;
     char *texts[] = {"Start game", "Create level", "     Exit     "};
-    
+
     TEXT* menuTexts;
     menuTexts = (TEXT*)malloc((*textsCount)*sizeof(TEXT));
     for(int i=0; i<(*textsCount); i++)
     {
         menuTexts[i].text = texts[i];
-        menuTexts[i].surface = MENU_generateTextsSurface(menuTexts[i].text, false, 16);
+        menuTexts[i].surface = MENU_generateTextsSurface(menuTexts[i].text, false, 36);
         menuTexts[i].texture = SDL_CreateTextureFromSurface(renderer, menuTexts[i].surface);
-        SDL_Rect menuTextsRect = {250,100*i+100,300,100};
+        SDL_Rect menuTextsRect = {250,100*i+70,300,70};
         menuTexts[i].rect = menuTextsRect;
     }
     return menuTexts;
@@ -52,15 +52,17 @@ void MENU_freeTexts(TEXT_STRUCT* menuTexts)
 
 void MENU_changeTextColor(TEXT_STRUCT* menuTexts, SDL_Renderer *renderer, int mouseX, int mouseY)
 {
-    int index = -1; 
+    int index = -1;
     for(int i=0; i<menuTexts->textsCount; i++)
     {
         SDL_FreeSurface(menuTexts->texts[i].surface);
         if(isOverRect(menuTexts->texts[i].rect, mouseX, mouseY))
-            menuTexts->texts[i].surface = MENU_generateTextsSurface(menuTexts->texts[i].text, true, 16);
+            menuTexts->texts[i].highlighted = true;
         else
-            menuTexts->texts[i].surface = MENU_generateTextsSurface(menuTexts->texts[i].text, false, 16);
-        
+            menuTexts->texts[i].highlighted = false;
+            
+        menuTexts->texts[i].surface = MENU_generateTextsSurface(menuTexts->texts[i].text, menuTexts->texts[i].highlighted, 36);
+
         SDL_DestroyTexture(menuTexts->texts[i].texture);
         menuTexts->texts[i].texture = SDL_CreateTextureFromSurface(renderer, menuTexts->texts[i].surface);
     }
@@ -77,7 +79,7 @@ void MENU_processEvents(System *system_data, TEXT_STRUCT* menuTexts, int mouseX,
             break;
         }
     }
-    switch (index) 
+    switch (index)
     {
         case 0:
             //Start game
@@ -101,7 +103,7 @@ void MENU_processKeyEvent(System *system_data, TEXT_STRUCT* menuTexts)
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        switch (event.type) 
+        switch (event.type)
         {
             case SDL_MOUSEMOTION:
                 MENU_changeTextColor(menuTexts, system_data->renderer, event.motion.x, event.motion.y);
@@ -123,7 +125,7 @@ void MENU_processKeyEvent(System *system_data, TEXT_STRUCT* menuTexts)
             break;
             case SDL_KEYDOWN:
             {
-                switch (event.key.keysym.sym) 
+                switch (event.key.keysym.sym)
                 {
                     case SDLK_ESCAPE:
                         system_data->gameState = END;

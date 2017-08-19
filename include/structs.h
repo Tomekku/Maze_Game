@@ -31,6 +31,7 @@ typedef struct{
     SDL_Surface* surface;
     SDL_Texture* texture;
     SDL_Rect rect;
+    bool highlighted;
 } TEXT;
 
 

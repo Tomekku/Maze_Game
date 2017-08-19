@@ -3,7 +3,8 @@
 void loadMenu(System *system_data)
 {
     TEXT_STRUCT menuTexts;
-
+    SDL_Texture* buttonUPTexture = SDL_CreateTextureFromSurface(system_data->renderer, IMG_Load("../res/button_background_up.png"));
+    SDL_Texture* buttonDOWNTexture = SDL_CreateTextureFromSurface(system_data->renderer, IMG_Load("../res/button_background_down.png"));
     menuTexts.texts = (TEXT*)MENU_generateTexts(system_data->renderer, &menuTexts.textsCount);
 
 
@@ -13,11 +14,21 @@ void loadMenu(System *system_data)
         SDL_RenderClear(system_data->renderer);
         MENU_processKeyEvent(system_data, &menuTexts);
         for(int i=0; i<menuTexts.textsCount; i++)
-            SDL_RenderCopy(system_data->renderer, menuTexts.texts[i].texture, NULL, &menuTexts.texts[i].rect);
+        {
+          SDL_Rect btnRect = {menuTexts.texts[i].rect.x-60, menuTexts.texts[i].rect.y, menuTexts.texts[i].rect.w+120, menuTexts.texts[i].rect.h+15};
+          if(menuTexts.texts[i].highlighted)
+            SDL_RenderCopy(system_data->renderer, buttonDOWNTexture, NULL,  &btnRect);
+          else
+            SDL_RenderCopy(system_data->renderer, buttonUPTexture, NULL,  &btnRect);
+
+          SDL_RenderCopy(system_data->renderer, menuTexts.texts[i].texture, NULL, &menuTexts.texts[i].rect);
+        }
         SDL_RenderPresent(system_data->renderer);
         SDL_Delay(100);
     }
     MENU_freeTexts(&menuTexts);
+    SDL_DestroyTexture(buttonDOWNTexture);
+    SDL_DestroyTexture(buttonUPTexture);
 }
 
 void loading(System *system_data)
