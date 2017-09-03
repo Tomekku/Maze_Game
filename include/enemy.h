@@ -13,4 +13,6 @@ AnimationSurfaces* ENEMY_addAnimationSurfaces(Direction direction);
 
 void ENEMY_animateEnemy(System *system_data, Enemy* enemy);
 
+void ENEMY_placeEnemy(System *system_data, Level *level);
+
 #endif

@@ -81,6 +81,20 @@ AnimationSurfaces* ENEMY_addAnimationSurfaces(Direction direction)
 }
 
 
+void ENEMY_placeEnemy(System *system_data, Level *level)
+{
+  Direction enemyDirection = rand() % RIGHT_UP;
+  SDL_Rect rect = {(rand() % (level->map.mapSizeX*BOX_SIZE)), (rand() % (level->map.mapSizeY*BOX_SIZE)), BOX_SIZE, BOX_SIZE};
+  Enemy enemy = {NULL, NULL ,rect, 4, enemyDirection};
+  initAnimate(system_data, &enemy.animationStruct, 'E');
+  enemy.texture = SDL_CreateTextureFromSurface(system_data->renderer, enemy.animationStruct[enemy.direction].animationSurfaces->surface);
+  Enemy_STRUCT *tmp = (Enemy_STRUCT*)malloc(sizeof(Enemy_STRUCT));
+  tmp->enemy = enemy;
+  tmp->next = (struct Enemy_STRUCT*)level->enemies;
+  level->enemies = (Enemy_STRUCT*)tmp;
+}
+
+
 void ENEMY_updateEnemy(Enemy *enemy, Level *level)
 {
     SDL_Rect tmp_rect = enemy->rect;
@@ -130,6 +144,8 @@ void ENEMY_updateEnemy(Enemy *enemy, Level *level)
 
 void ENEMY_animateEnemy(System *system_data, Enemy* enemy)
 {
+  if(enemy->texture)
+    SDL_DestroyTexture(enemy->texture);
   enemy->texture = SDL_CreateTextureFromSurface(system_data->renderer, enemy->animationStruct[enemy->direction].animationSurfaces->surface);
   enemy->animationStruct[enemy->direction].animationSurfaces = enemy->animationStruct[enemy->direction].animationSurfaces->next;
 }

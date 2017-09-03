@@ -65,6 +65,7 @@ void LEVEL_deleteEnemies(Enemy_STRUCT *enemy)
     {
         Enemy_STRUCT* p = (Enemy_STRUCT*)enemy->next;
         SDL_DestroyTexture(enemy->enemy.texture);
+        deleteAnimations(enemy->enemy.animationStruct);
         free(enemy);
         enemy = (Enemy_STRUCT*)p;
     }
@@ -255,6 +256,24 @@ MapElement** LEVEL_generateMap(int *mapSizeX, int *mapSizeY, SDL_Renderer *rende
         for(int y=0; y<(*mapSizeY); y++)
         {
             SDL_Rect rect = {x*BOX_SIZE + positionX, y*BOX_SIZE + positionY, BOX_SIZE, BOX_SIZE};
+            map[x][y] = LEVEL_generateMapElement(rect, renderer, IT_EMPTY, false, elementScreens, elementScreensCount);
+        }
+    }
+    return map;
+}
+
+MapElement** LEVEL_generateFullSizeMap(int *mapSizeX, int *mapSizeY, SDL_Renderer *renderer, MapElementScreen *elementScreens, int elementScreensCount)
+{
+    (*mapSizeX) = 47;
+    (*mapSizeY) = 35;
+
+    MapElement** map = (MapElement**)malloc((*mapSizeX)*sizeof(MapElement*));
+    for(int x=0; x<(*mapSizeX); x++)
+    {
+        map[x] = (MapElement*)malloc((*mapSizeY)*sizeof(MapElement));
+        for(int y=0; y<(*mapSizeY); y++)
+        {
+            SDL_Rect rect = {x*BOX_SIZE, y*BOX_SIZE, BOX_SIZE, BOX_SIZE};
             map[x][y] = LEVEL_generateMapElement(rect, renderer, IT_EMPTY, false, elementScreens, elementScreensCount);
         }
     }

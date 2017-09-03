@@ -43,6 +43,8 @@ Legend* LEVEL_generateLegends(SDL_Renderer *renderer, int *legendsCount, MapElem
 
 MapElement** LEVEL_generateMap(int *mapSizeX, int *mapSizeY, SDL_Renderer *renderer, MapElementScreen *elementScreens, int elementScreensCount, int posX, int posY);
 
+MapElement** LEVEL_generateFullSizeMap(int *mapSizeX, int *mapSizeY, SDL_Renderer *renderer, MapElementScreen *elementScreens, int elementScreensCount);
+
 void LEVEL_highlightMapElement(MapElement *element, SDL_Renderer *renderer, MapElementScreen *elementScreens, int elementScreensCount);
 
 void LEVEL_unHighlightMapElement(MapElement *element, SDL_Renderer *renderer, MapElementScreen *elementScreens, int elementScreensCount);

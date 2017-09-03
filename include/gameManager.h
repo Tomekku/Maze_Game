@@ -9,7 +9,7 @@
 #include "file.h"
 #include "animations.h"
 
-void loadMenu(System *system_data);
+void loadMenu(System *system_data, Level *level);
 
 void loading(System *system_data);
 

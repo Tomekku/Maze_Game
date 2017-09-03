@@ -37,6 +37,7 @@ TEXT* MENU_generateTexts(SDL_Renderer *renderer, int *textsCount)
         menuTexts[i].texture = SDL_CreateTextureFromSurface(renderer, menuTexts[i].surface);
         SDL_Rect menuTextsRect = {250,100*i+70,300,70};
         menuTexts[i].rect = menuTextsRect;
+        menuTexts[i].highlighted = false;
     }
     return menuTexts;
 }
@@ -60,7 +61,7 @@ void MENU_changeTextColor(TEXT_STRUCT* menuTexts, SDL_Renderer *renderer, int mo
             menuTexts->texts[i].highlighted = true;
         else
             menuTexts->texts[i].highlighted = false;
-            
+
         menuTexts->texts[i].surface = MENU_generateTextsSurface(menuTexts->texts[i].text, menuTexts->texts[i].highlighted, 36);
 
         SDL_DestroyTexture(menuTexts->texts[i].texture);

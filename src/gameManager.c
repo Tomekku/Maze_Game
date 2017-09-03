@@ -1,18 +1,27 @@
 #include "../include/gameManager.h"
 
-void loadMenu(System *system_data)
+void loadMenu(System *system_data, Level *level)
 {
+
     TEXT_STRUCT menuTexts;
     SDL_Texture* buttonUPTexture = SDL_CreateTextureFromSurface(system_data->renderer, IMG_Load("../res/button_background_up.png"));
     SDL_Texture* buttonDOWNTexture = SDL_CreateTextureFromSurface(system_data->renderer, IMG_Load("../res/button_background_down.png"));
     menuTexts.texts = (TEXT*)MENU_generateTexts(system_data->renderer, &menuTexts.textsCount);
+    level->map.mapElements = LEVEL_generateFullSizeMap(&level->map.mapSizeX, &level->map.mapSizeY, system_data->renderer, system_data->mapElementsScreens, system_data->MapElementScreenCount);
+    int enemiesCount = 200;
+    srand(time(NULL));
 
+    for(int i=0; i<enemiesCount; i++)
+      ENEMY_placeEnemy(system_data, level);
 
     bool end = false;
     while(system_data->gameState == MENU)
     {
         SDL_RenderClear(system_data->renderer);
         MENU_processKeyEvent(system_data, &menuTexts);
+        ENEMY_updateEnemies(system_data, level);
+
+        LEVEL_renderLevelItems(level, system_data);
         for(int i=0; i<menuTexts.textsCount; i++)
         {
           SDL_Rect btnRect = {menuTexts.texts[i].rect.x-60, menuTexts.texts[i].rect.y, menuTexts.texts[i].rect.w+120, menuTexts.texts[i].rect.h+15};
@@ -29,6 +38,7 @@ void loadMenu(System *system_data)
     MENU_freeTexts(&menuTexts);
     SDL_DestroyTexture(buttonDOWNTexture);
     SDL_DestroyTexture(buttonUPTexture);
+    LEVEL_deleteLevel(level);
 }
 
 void loading(System *system_data)
@@ -330,7 +340,7 @@ void runGame()
         switch(system_data.gameState)
         {
             case MENU:
-                loadMenu(&system_data);
+                loadMenu(&system_data, &level);
                 break;
             case LEVEL:
                 getLevel(&player, &level, &system_data);
